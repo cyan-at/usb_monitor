@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required( VERSION 3.12 )
 
 project(usb_monitor)
 
@@ -14,11 +14,16 @@ find_package(PkgConfig REQUIRED)
 find_package(jsoncpp REQUIRED)
 # find_package(UDev REQUIRED)
 pkg_check_modules(UDEV REQUIRED libudev)
+pkg_check_modules( sigc REQUIRED sigc++-3.0 )
+
+set(CMAKE_CXX_STANDARD 17)
 
 include_directories(
     ${JSONCPP_INCLUDE_DIRS}
     ${UDEV_INCLUDE_DIRS}
     jsoncpp
+    /usr/local/viper/include/dbus-cxx-2.0/
+    ${sigc_INCLUDE_DIRS}
 )
 
 set(SOURCE_DIR "src")
@@ -39,4 +44,6 @@ target_link_libraries(
     ${UDEV_LIBRARIES}
     ${JSONCPP_LIBRARIES}
     jsoncpp
+    /usr/local/viper/lib/libdbus-cxx.so
+    ${sigc_LIBRARIES}
 )

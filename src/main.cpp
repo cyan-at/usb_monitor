@@ -1,5 +1,7 @@
 #include "usb_monitor.hpp"
 
+#include <dbus-cxx.h>
+
 int main(int argc, char** argv)
 {
     signal(SIGPIPE, SIG_IGN);
