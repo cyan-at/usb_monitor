@@ -77,7 +77,9 @@ std::string Utils::serialize_data(const std::string &action, const std::map<std:
     json["action"] = action;
 
     // Pass the values from the device_data map to json_str.
+    printf("hello\n");
     for(std::pair<std::string, std::string> element : device_data){
+        printf("%s %s\n", element.first.c_str(), element.second.c_str());
         json[element.first] = element.second;
     }
 

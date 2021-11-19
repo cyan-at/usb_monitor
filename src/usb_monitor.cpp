@@ -101,13 +101,20 @@ void UsbMonitor::start(const std::string &rhost, const unsigned short rport)
 
 void UsbMonitor::report_usb_connection(const std::string &action, udev_device_ptr* udev_device)
 {
-    std::cout << "[*] Device connected." << '\n';
     std::string sysname(udev_device_get_sysname(*udev_device));
 
-    devices.emplace(sysname, std::make_unique<UsbMonitor::UsbInfo>(udev_device));
-    std::string dev_properties(Utils::serialize_data(action, devices[sysname]->properties()));
+    std::cout << "[*] Device connected. " << sysname << ' ' << action << '\n';
 
-    report(dev_properties);
+    // devices.emplace(sysname, std::make_unique<UsbMonitor::UsbInfo>(udev_device));
+    auto temp = std::make_unique<UsbMonitor::UsbInfo>(udev_device);
+
+    std::cout << "hi" << std::endl;
+
+    std::string dev_properties(Utils::serialize_data(action, temp->properties()));
+
+    std::cout << "[*] Device connected. " << '\n';
+
+    // report(dev_properties);
 }
 
 void UsbMonitor::report_usb_disconnection(const std::string &action, udev_device_ptr* udev_device)
@@ -142,19 +149,22 @@ void UsbMonitor::stop()
 
 UsbMonitor::UsbInfo::UsbInfo(const udev_device_ptr* udev_device)
 {
-    this->_properties.emplace("dev_path", udev_device_get_devpath(*udev_device));
+    try {
+        this->_properties.emplace("dev_path", udev_device_get_devpath(*udev_device));
 
-    this->_properties.emplace("manufacturer", udev_device_get_sysattr_value(*udev_device, "manufacturer"));
-    this->_properties.emplace("product", udev_device_get_sysattr_value(*udev_device, "product"));
+        this->_properties.emplace("manufacturer", udev_device_get_sysattr_value(*udev_device, "manufacturer"));
+        this->_properties.emplace("product", udev_device_get_sysattr_value(*udev_device, "product"));
 
-    this->_properties.emplace("serial", udev_device_get_sysattr_value(*udev_device, "serial"));
-    this->_properties.emplace("product_id", udev_device_get_sysattr_value(*udev_device, "idProduct"));
+        this->_properties.emplace("serial", udev_device_get_sysattr_value(*udev_device, "serial"));
+        this->_properties.emplace("product_id", udev_device_get_sysattr_value(*udev_device, "idProduct"));
 
-    this->_properties.emplace("vendor_id", udev_device_get_sysattr_value(*udev_device, "idVendor"));
-    this->_properties.emplace("speed", udev_device_get_sysattr_value(*udev_device, "speed"));
+        this->_properties.emplace("vendor_id", udev_device_get_sysattr_value(*udev_device, "idVendor"));
+        this->_properties.emplace("speed", udev_device_get_sysattr_value(*udev_device, "speed"));
 
-    this->_properties.emplace("max_speed", udev_device_get_sysattr_value(*udev_device, "bMaxPacketSize0"));
-    this->_properties.emplace("power", udev_device_get_sysattr_value(*udev_device, "bMaxPower"));
+        this->_properties.emplace("max_speed", udev_device_get_sysattr_value(*udev_device, "bMaxPacketSize0"));
+        this->_properties.emplace("power", udev_device_get_sysattr_value(*udev_device, "bMaxPower"));
+    } catch (...) {
+    }
 }
 
 UsbMonitor::UsbInfo::~UsbInfo()
